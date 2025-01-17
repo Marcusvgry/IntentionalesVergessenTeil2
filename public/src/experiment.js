@@ -7,7 +7,7 @@ const jsPsych = initJsPsych({
         const vpnNumber = responses["VPN-Nummer"];
 
         // Dateiname erstellen
-        const filename = `IntentionalesVergessen_VP${vpnNumber}.csv`;
+        const filename = `IntentionalesVergessen2_VP${vpnNumber}.csv`;
 
         // Daten als CSV speichern
         jsPsych.data.get().localSave("csv", filename);
@@ -43,8 +43,7 @@ var Bedingung_2 = [
 ];
 
 var Stimuli = [];
-var filteredStimuli = [];
-var cuedRecallWords = [];
+var cuedRecallWords = Bedingung_1.concat(Bedingung_2);  
 
 timeline.push({
     type: jsPsychFullscreen,
@@ -70,34 +69,6 @@ const CBC_VPNNummer = {
     
 </div>
 `,
-    on_finish: function (data) {
-        const responses = data.response;
-        selectedCondition = responses["Bedingung"];
-        if (selectedCondition === "1") {
-            // Bedingung 1
-            for (let i in Bedingung_1) {
-                Stimuli.push({ Wort: Bedingung_1[i], Anweisung: "*eee*" });
-            }
-            for (let i in Bedingung_2) {
-                Stimuli.push({ Wort: Bedingung_2[i], Anweisung: "*vvv*" });
-            }
-        } else if (selectedCondition === "2") {
-            // Bedingung 2
-            for (let i in Bedingung_1) {
-                Stimuli.push({ Wort: Bedingung_1[i], Anweisung: "*vvv*" });
-            }
-            for (let i in Bedingung_2) {
-                Stimuli.push({ Wort: Bedingung_2[i], Anweisung: "*eee*" });
-            }
-        }
-
-        // Filtern der Wörter, die erinnert werden müssen
-        filteredStimuli = Stimuli.filter(stimulus => stimulus.Anweisung === "*eee*");
-
-        for (let stimulus of filteredStimuli) {
-            cuedRecallWords.push(stimulus.Wort);
-        }
-    }
 };
 
 // Weitere Phasen und Instruktionen
@@ -106,45 +77,6 @@ const instructions = {
     pages: [
         `<div class="instructions">
         Instruktionen 1 </div>`,
-    ],
-    show_clickable_nav: true,
-    button_label_next: "Beginnen",
-    allow_backward: false,
-};
-
-const extinction_phase = {
-    timeline: [
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: '<div style="font-size: 60px;">+</div>',
-            choices: "NO_KEYS",
-            trial_duration: 500
-        },
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: jsPsych.timelineVariable('Wort'),
-            choices: "NO_KEYS",
-            trial_duration: 1000,
-            stimulus_duration: 1000,
-            css_classes: ['stimulus-large-text']  // CSS-Klasse hier angewendet
-        },
-        {
-            type: jsPsychHtmlKeyboardResponse,
-            stimulus: jsPsych.timelineVariable('Anweisung'),
-            choices: "NO_KEYS",
-            trial_duration: 800,
-            css_classes: ['stimulus-large-text']  // CSS-Klasse hier angewendet
-        },
-    ],
-    timeline_variables: Stimuli,
-    randomize_order: true
-};
-
-const Instructions_Teil2 = {
-    type: jsPsychInstructions,
-    pages: [
-        `<div class="instructions">
-        Instruktionen Free-Recall </div>`,
     ],
     show_clickable_nav: true,
     button_label_next: "Beginnen",
@@ -192,8 +124,6 @@ const Debriefing = {
 timeline.push(preload);
 timeline.push(CBC_VPNNummer);
 timeline.push(instructions);
-timeline.push(extinction_phase);
-timeline.push(Instructions_Teil2);
 timeline.push(freeRecallWoerter);
 timeline.push(Instructions_Teil3);
 timeline.push(cuedRecallTrial);
