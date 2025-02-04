@@ -89,3 +89,23 @@ html, body {
 .stimulus-large-text {
   font-size: 32px; /* Schriftgröße auf 32px setzen */
 }
+
+/* Stelle sicher, dass wir einen Container haben,
+   in dem der Button rechtsbündig sein kann. */
+   .recall-footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;  /* Button nach rechts */
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  /* Checkbox-Container anfangs unsichtbar */
+  #confirmation-checkbox-container {
+    display: none;
+    margin-right: 15px; /* Platz zwischen Checkbox und Button */
+    align-items: center;
+    font-size: 16px;
+    color: #333;
+  }
+  

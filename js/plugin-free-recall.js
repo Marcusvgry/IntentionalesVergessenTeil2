@@ -3,11 +3,11 @@ var freeRecall = (function (jspsych) {
 
   const info = {
     name: "freeRecall",
-    version: "1.0.0",
+    version: "1.1.0",
     parameters: {
       prompt: {
         type: jspsych.ParameterType.STRING,
-        default: "Bitte geben Sie ein Wort ein und drücken Sie Enter oder klicken Sie auf 'Fertig'.",
+        default: "Bitte geben Sie ein Wort ein und drücken Sie Enter.",
       },
       button_label: {
         type: jspsych.ParameterType.STRING,
@@ -15,7 +15,7 @@ var freeRecall = (function (jspsych) {
       },
       data: {
         type: jspsych.ParameterType.OBJECT,
-        default: {}, // Standardwert für die 'data' Eigenschaft
+        default: {},
       }
     },
   };
@@ -26,83 +26,141 @@ var freeRecall = (function (jspsych) {
     }
 
     trial(display_element, trial) {
-      let words = []; // Liste der eingegebenen Wörter
-      let reaction_times = []; // Liste der Reaktionszeiten
-      let all_responses_free_recall = []; // Array für Wörter und Reaktionszeiten
-      let lastTime = performance.now(); // Startzeit des Trials
-      let lastEnterTime = null; // Zeitstempel für das letzte Drücken von "Enter"
+      // Variablen zur Speicherung
+      let words = [];                   // Eingegebene Wörter
+      let reaction_times = [];          // Reaktionszeiten pro Wort
+      let all_responses_free_recall = []; // Array mit { word, reaction_time }
 
-      // HTML für den Trial
+      // Zeitpunkte
+      let lastWordEndTime = performance.now();  // Wann das letzte Wort bestätigt wurde
+      let firstKeypressTime = null;             // Wann der Nutzer das erste Mal tippt (für aktuelles Wort)
+
+      // HTML-Layout
+      // Wir nutzen hier eine Container-DIV und platzieren
+      // den "Fertig"-Button in einer recall-footer, damit er rechtsbündig ist.
       let html = `
-        <div id="jspsych-free-recall">
+        <div id="jspsych-free-recall" class="survey-container">
           <div class="prompt-container">
             <p class="jspsych-prompt">${trial.prompt}</p>
           </div>
-          <form id="jspsych-free-recall-form">
-            <input type="text" id="free-recall-input" name="response" class="jspsych-input" size="40" autofocus />
-            <button type="submit" id="free-recall-submit" class="jspsych-btn">${trial.button_label}</button>
+          <form id="jspsych-free-recall-form" style="width: 100%;">
+            <input
+              type="text"
+              id="free-recall-input"
+              name="response"
+              class="jspsych-input input-field"
+              size="40"
+              autofocus
+            />
+            <div class="recall-footer">
+              <!-- Checkbox-Container (zunächst unsichtbar) -->
+              <div id="confirmation-checkbox-container">
+                <input type="checkbox" id="confirmation-checkbox" />
+                <label for="confirmation-checkbox" style="margin-left: 5px;">
+                  Recall wirklich beenden
+                </label>
+              </div>
+              <!-- Fertig-Button -->
+              <button
+                type="submit"
+                id="free-recall-submit"
+                class="jspsych-btn"
+              >
+                ${trial.button_label}
+              </button>
+            </div>
           </form>
         </div>
       `;
 
+      // Setze das HTML in das Display-Element
       display_element.innerHTML = html;
 
-      const inputElement = document.querySelector("#free-recall-input");
+      // Referenzen auf Input und Button
+      const inputElement = display_element.querySelector("#free-recall-input");
+      const formElement = display_element.querySelector("#jspsych-free-recall-form");
+      const submitButton = display_element.querySelector("#free-recall-submit");
+      const checkboxContainer = display_element.querySelector("#confirmation-checkbox-container");
+      const confirmationCheckbox = display_element.querySelector("#confirmation-checkbox");
 
-      // Event Listener für "Enter"-Taste
-      inputElement.addEventListener("keypress", (e) => {
+      // Flag, das steuert, ob wir schon einmal geklickt haben
+      let buttonClickedOnce = false;
+
+      // 1) Key-Listener für das Input-Feld
+      inputElement.addEventListener("keydown", (e) => {
+        // Erfassen, wann das erste Zeichen getippt wurde
+        // (e.key.length === 1) bedeutet "normales Zeichen"
+        if (!firstKeypressTime && e.key.length === 1 && !e.altKey && !e.ctrlKey && !e.metaKey) {
+          firstKeypressTime = performance.now();
+        }
+
+        // Wenn der Benutzer Enter drückt, wird das Wort gespeichert
         if (e.key === "Enter") {
-          e.preventDefault(); // Verhindert das Absenden des Formulars
+          e.preventDefault(); // Verhindert das Form-Submit
 
+          // Hat der Nutzer überhaupt etwas eingetippt?
           const value = inputElement.value.trim();
-          const currentTime = performance.now();
-
           if (value) {
-            const reactionTime = Math.round(currentTime - lastTime); // Reaktionszeit seit der letzten Eingabe
-            words.push(value); // Wort zur Liste hinzufügen
-            reaction_times.push(reactionTime); // Reaktionszeit zur Liste hinzufügen
-            all_responses_free_recall.push({ word: value, reaction_time: reactionTime }); // Hinzufügen zum Array
-            inputElement.value = ""; // Eingabefeld leeren
-          }
+            // Berechne die Reaktionszeit ab dem ersten Tastendruck
+            let rt = 0;
+            if (firstKeypressTime) {
+              rt = Math.round(firstKeypressTime - lastWordEndTime);
+            }
+            words.push(value);
+            reaction_times.push(rt);
+            all_responses_free_recall.push({ word: value, reaction_time: rt });
 
-          lastTime = currentTime; // Zeitstempel für das nächste Wort aktualisieren
-          lastEnterTime = currentTime; // Zeit des letzten "Enter"-Drückens speichern
+            // Neue Startzeit für das nächste Wort
+            lastWordEndTime = performance.now();
+            firstKeypressTime = null; // Zurücksetzen
+            inputElement.value = "";  // Eingabefeld leeren
+          }
         }
       });
 
-      // Event Listener für den "Fertig"-Button
-      display_element.querySelector("#jspsych-free-recall-form").addEventListener("submit", (e) => {
-        e.preventDefault(); // Verhindert das Standard-Submit-Verhalten
+      // 2) "Fertig"-Button: Beim ersten Klick -> Checkbox anzeigen, beim zweiten Klick -> Check Abfrage
+      formElement.addEventListener("submit", (e) => {
+        e.preventDefault();
 
+        // Falls der Benutzer das letzte Wort eingetippt, aber nicht Enter gedrückt hat, speichern wir es:
         const value = inputElement.value.trim();
-        const currentTime = performance.now();
-
         if (value) {
-          const reactionTime = Math.round(currentTime - lastTime); // Reaktionszeit des letzten Wortes
-          words.push(value); // Letztes Wort hinzufügen, falls vorhanden
-          reaction_times.push(reactionTime); // Reaktionszeit zur Liste hinzufügen
-          all_responses_free_recall.push({ word: value, reaction_time: reactionTime }); // Hinzufügen zum 2D-Array
+          let rt = 0;
+          if (firstKeypressTime) {
+            rt = Math.round(firstKeypressTime - lastWordEndTime);
+          }
+          words.push(value);
+          reaction_times.push(rt);
+          all_responses_free_recall.push({ word: value, reaction_time: rt });
+
+          lastWordEndTime = performance.now();
+          firstKeypressTime = null;
+          inputElement.value = "";
         }
 
-        // Wenn der Benutzer nie "Enter" gedrückt hat, setzen wir lastEnterTime auf die aktuelle Zeit
-        if (lastEnterTime === null) {
-          lastEnterTime = currentTime;
+        // Logik für Checkbox
+        if (!buttonClickedOnce) {
+          // Zeige Checkbox
+          checkboxContainer.style.display = "flex";
+          buttonClickedOnce = true;
+          // Der Trial ist aber noch NICHT beendet
+          return;
+        } else {
+          // Zweiter Klick: Prüfen, ob die Checkbox angehakt ist
+          if (!confirmationCheckbox.checked) {
+            alert("Bitte bestätigen Sie erst, dass Sie den Recall beenden möchten.");
+            return;
+          }
+
+          // Checkbox ist angehakt => Trial beenden
+          const trialData = {
+            words: words,
+            reaction_times: reaction_times,
+            all_responses_free_recall: all_responses_free_recall,
+            data: trial.data,
+          };
+          this.jsPsych.finishTrial(trialData);
         }
-
-        // Berechne die Zeit von der letzten "Enter"-Eingabe bis zum "Fertig"-Klick
-        const totalTime = Math.round(currentTime - lastEnterTime); // Zeit vom letzten "Enter"-Drücken bis "Fertig"
-
-        // Daten für den Trial speichern
-        const trialdata = {
-          rt: totalTime, // Zeit vom letzten "Enter"-Drücken bis zum Klick auf "Fertig"
-          words: words, // Liste der eingegebenen Wörter
-          reaction_times: reaction_times, // Liste der Reaktionszeiten für jedes Wort
-          all_responses_free_recall: all_responses_free_recall, // 2D-Array mit Wort und Reaktionszeit
-          data: trial.data, // Füge hier das 'data' Feld hinzu
-        };
-
-        // Trial beenden und Daten speichern
-        this.jsPsych.finishTrial(trialdata);
       });
     }
   }
@@ -110,67 +168,3 @@ var freeRecall = (function (jspsych) {
   FreeRecallPlugin.info = info;
   return FreeRecallPlugin;
 })(jsPsychModule);
-
-
-// Füge die folgenden CSS-Stile hinzu:
-const style = document.createElement('style');
-style.innerHTML = `
- #jspsych-free-recall {
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 90px 10px 90px;
-  background-color: #f9f9f9;
-  border-radius: 12px; /* 20% größer als 10px */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* etwas größere Box-Schatten */
-  max-width: 550px; /* 20% größer als 400px */
-  margin: 0 auto;
-}
-
-.jspsych-input {
-  padding: 12px; /* Größerer Abstand für mehr Platz im Eingabefeld */
-  font-size: 20px !important; 
-  border-radius: 6px; /* 20% größer als 5px */
-  border: 1px solid #ddd;
-  width: 30%; 
-  max-width: 175px; /* Maximal 300px breit */
-  height: 50px; /* Höhe des Eingabefeldes erhöhen */
-  margin-bottom: 24px; 
-  box-sizing: border-box;
- 
-}
-
-
-
-#jspsych-free-recall-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%; /* Volle Breite */
-}
-
-.jspsych-btn {
-  padding: 12px 24px; 
-  font-size: 19.2px; 
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px; 
-}
-
-.jspsych-btn:hover {
-  background-color: #45a049;
-}
-
-.jspsych-btn:active {
-  background-color: #388e3c;
-}
-
-`;
-
-document.head.appendChild(style);
