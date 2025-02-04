@@ -105,7 +105,7 @@ const cuedRecallTrial = {
     type: cuedRecall,
     prompt: "Instruktionen Cued-Recall.",
     button_label: "Fertig",
-    string_to_display: cuedRecallWords,
+    string_to_display:  ['13mmm', '14nnn', '15ooo'],
 };
 
 // Debriefing

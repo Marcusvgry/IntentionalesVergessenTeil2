@@ -22,19 +22,6 @@ html, body {
   align-items: center; /* Center items horizontally */
 }
 
-/* Input field style */
-.input-field {
-  width: 50%; /* Full width of the container */
-  max-width: 300px; /* Maximum width for the input field */
-  padding: 10px;
-  margin: 15px 0;
-  font-size: 1em;
-  border: 2px solid #dddddd; /* Soft border */
-  border-radius: 5px;
-  background-color: #fefefe;
-  color: #333333; /* Darker text in the fields */
-  box-sizing: border-box;
-}
 
 .input-field:focus {
   border-color: #000000; /* Blue highlight on focus */
@@ -60,18 +47,6 @@ html, body {
   color: #000000; /* Blue highlight on hover */
 }
 
-/* Next button */
-.jspsych-btn {
-  margin-top: 20px;
-  padding: 12px 25px;
-  font-size: 16px;
-  background-color: #4caf50; /* Green button */
-  color: white;
-  border: none;
-  border-radius: 8px; /* Rounded edges */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
 
 .jspsych-prompt {
   font-size: 23px; /* 20% größer als 18px */
@@ -81,31 +56,81 @@ html, body {
 }
 
 
-.jspsych-btn:hover {
-  background-color: #45a049; /* Slightly darker on hover */
-}
-
 /* CSS-Klasse für größere Schrift */
 .stimulus-large-text {
   font-size: 32px; /* Schriftgröße auf 32px setzen */
 }
 
-/* Stelle sicher, dass wir einen Container haben,
-   in dem der Button rechtsbündig sein kann. */
-   .recall-footer {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;  /* Button nach rechts */
-    align-items: center;
-    margin-top: 20px;
-  }
+
   
-  /* Checkbox-Container anfangs unsichtbar */
-  #confirmation-checkbox-container {
-    display: none;
-    margin-right: 15px; /* Platz zwischen Checkbox und Button */
-    align-items: center;
-    font-size: 16px;
-    color: #333;
-  }
-  
+/* Haupt-Container */
+.survey-container {
+  /* Beispielwerte - ggf. anpassen */
+  background-color: #f1f1f1;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;   /* Container-Breite */
+  width: 90%;         /* oder 70%, wie du magst */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+}
+
+/* Eingabefeld mit passender Breite */
+.input-field {
+  width: 80%;         /* 80% der Container-Breite */
+  max-width: 250px;   /* Begrenzte Maximalbreite */
+  margin: 10px auto;  /* zentrieren */
+  display: block;     /* block, damit margin: auto greift */
+  font-size: 1em;
+  border: 2px solid #dddddd;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;  
+  /* etc. */
+}
+
+/* Flex-Container für Button (und Checkbox) */
+.recall-footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;   /* Rechtsbündig */
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Checkbox styling */
+#confirmation-checkbox-container {
+  margin-right: 15px; /* etwas Platz zwischen Checkbox und Button */
+}
+
+/* Button */
+.jspsych-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #4caf50; /* Grün */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.jspsych-btn:hover {
+  background-color: #45a049;
+}
+
+#cued-recall-input {
+  border: none;                    /* Keine sichtbaren Ränder */
+  border-bottom: 2px solid black;  /* Nur ein unterer schwarzer Strich */
+  background: transparent;         /* Durchsichtiger Hintergrund */
+  outline: none;                   /* Entfernt Fokus-Rand */
+  font-size: 20px;
+  padding: 2px 0;                  /* Leichtes Padding nach oben/unten */
+  margin-left: 0px;                /* Kein extra Zwischenraum (nahtlos) */
+  border-radius: 0;                /* Keine abgerundeten Ecken */
+  box-shadow: none;                /* Entfernt eventuelle Schatten */
+  width: 130px;                    /* Feste Breite (ggf. anpassen) */
+}

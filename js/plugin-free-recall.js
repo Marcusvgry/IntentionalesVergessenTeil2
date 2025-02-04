@@ -35,29 +35,29 @@ var freeRecall = (function (jspsych) {
       let lastWordEndTime = performance.now();  // Wann das letzte Wort bestätigt wurde
       let firstKeypressTime = null;             // Wann der Nutzer das erste Mal tippt (für aktuelles Wort)
 
-      // HTML-Layout
-      // Wir nutzen hier eine Container-DIV und platzieren
-      // den "Fertig"-Button in einer recall-footer, damit er rechtsbündig ist.
+      // HTML-Layout:
+      // .survey-container => dein Haupt-Container (zentriert, mit Rand, etc.)
+      // .recall-footer    => sorgt dafür, dass Button + ggf. Checkbox am rechten Rand stehen
       let html = `
         <div id="jspsych-free-recall" class="survey-container">
           <div class="prompt-container">
             <p class="jspsych-prompt">${trial.prompt}</p>
           </div>
           <form id="jspsych-free-recall-form" style="width: 100%;">
+            <!-- Eingabefeld ohne size-Attribut -->
             <input
               type="text"
               id="free-recall-input"
               name="response"
               class="jspsych-input input-field"
-              size="40"
               autofocus
             />
             <div class="recall-footer">
               <!-- Checkbox-Container (zunächst unsichtbar) -->
-              <div id="confirmation-checkbox-container">
+              <div id="confirmation-checkbox-container" style="display: none;">
                 <input type="checkbox" id="confirmation-checkbox" />
                 <label for="confirmation-checkbox" style="margin-left: 5px;">
-                  Recall wirklich beenden
+                  Beenden bestätigen
                 </label>
               </div>
               <!-- Fertig-Button -->
@@ -98,10 +98,9 @@ var freeRecall = (function (jspsych) {
         if (e.key === "Enter") {
           e.preventDefault(); // Verhindert das Form-Submit
 
-          // Hat der Nutzer überhaupt etwas eingetippt?
           const value = inputElement.value.trim();
           if (value) {
-            // Berechne die Reaktionszeit ab dem ersten Tastendruck
+            // Berechne die Reaktionszeit ab erstem Tastendruck
             let rt = 0;
             if (firstKeypressTime) {
               rt = Math.round(firstKeypressTime - lastWordEndTime);
@@ -110,10 +109,10 @@ var freeRecall = (function (jspsych) {
             reaction_times.push(rt);
             all_responses_free_recall.push({ word: value, reaction_time: rt });
 
-            // Neue Startzeit für das nächste Wort
+            // Reset
             lastWordEndTime = performance.now();
-            firstKeypressTime = null; // Zurücksetzen
-            inputElement.value = "";  // Eingabefeld leeren
+            firstKeypressTime = null;
+            inputElement.value = "";
           }
         }
       });
@@ -122,7 +121,7 @@ var freeRecall = (function (jspsych) {
       formElement.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        // Falls der Benutzer das letzte Wort eingetippt, aber nicht Enter gedrückt hat, speichern wir es:
+        // Falls der Benutzer das letzte Wort eingetippt, aber nicht Enter gedrückt hat
         const value = inputElement.value.trim();
         if (value) {
           let rt = 0;
@@ -141,25 +140,21 @@ var freeRecall = (function (jspsych) {
         // Logik für Checkbox
         if (!buttonClickedOnce) {
           // Zeige Checkbox
-          checkboxContainer.style.display = "flex";
+          checkboxContainer.style.display = "flex"; // oder "inline-flex"
           buttonClickedOnce = true;
           // Der Trial ist aber noch NICHT beendet
           return;
         } else {
           // Zweiter Klick: Prüfen, ob die Checkbox angehakt ist
-          if (!confirmationCheckbox.checked) {
-            alert("Bitte bestätigen Sie erst, dass Sie den Recall beenden möchten.");
-            return;
-          }
 
           // Checkbox ist angehakt => Trial beenden
-          const trialData = {
+          const trialdata = {
             words: words,
             reaction_times: reaction_times,
             all_responses_free_recall: all_responses_free_recall,
             data: trial.data,
           };
-          this.jsPsych.finishTrial(trialData);
+          this.jsPsych.finishTrial(trialdata);
         }
       });
     }
