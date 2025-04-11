@@ -33,7 +33,7 @@ var cuedRecall = (function (jspsych) {
       this.jsPsych = jsPsych;
     }
 
-    // Hilfsfunktion zum Durchmischen
+    // Hilfsfunktion zum Durchmischen eines Arrays
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -49,46 +49,44 @@ var cuedRecall = (function (jspsych) {
       let firstKeypressTime = null;
       let currentWordIndex = 0;
 
-      // Kopie der Wörter
+      // Kopie der Wörter (optional randomisiert)
       let wordsToDisplay = trial.string_to_display.slice();
       if (trial.randomized) {
         wordsToDisplay = this.shuffleArray(wordsToDisplay);
       }
 
-      // Zeigt nur die ersten 2 Buchstaben
+      // Funktion: Zeigt nur die ersten 2 Buchstaben eines Wortes
       function getFirstTwoLetters(word) {
         return word.slice(0, 2);
       }
 
-      // HTML-Layout
-      //  - Button und Checkbox sind anfangs "invisible" (visibility: hidden),
-      //    damit der Container nicht springt
+      // HTML-Layout:
+      // - Verwendung der globalen Klasse "survey-container" (für den grauen Kasten)
+      // - Aneinanderreihung von <p> (Initial-Buchstaben) und <input> ohne Leerzeichen/Zeilenumbrüche,
+      //   damit der getippte Text nahtlos an die vorangestellten Buchstaben anschließt.
       let html = `
         <div id="jspsych-cued-recall" class="survey-container">
           <div class="prompt-container">
             <p class="jspsych-prompt">${trial.prompt}</p>
             <div class="jspsych-initial-words-container">
-              <p class="jspsych-initial-words" id="current-word">
-                ${getFirstTwoLetters(wordsToDisplay[currentWordIndex])}
-              </p>
-              <input
+              <p class="jspsych-initial-words" id="current-word">${getFirstTwoLetters(wordsToDisplay[currentWordIndex])}</p><input
                 type="text"
                 id="cued-recall-input"
                 name="response"
-                class="jspsych-input input-field cued-recall-line-input"
+                class="jspsych-input cued-recall-line-input"
               />
             </div>
           </div>
           <form id="cued-recall-form" style="width: 100%;">
             <div class="recall-footer">
-              <!-- Checkbox-Container, unsichtbar aber im Layout -->
+              <!-- Checkbox-Container, zunächst unsichtbar -->
               <div id="confirmation-checkbox-container" class="invisible-visibility">
                 <input type="checkbox" id="confirmation-checkbox" />
                 <label for="confirmation-checkbox" style="margin-left: 5px;">
                   Recall wirklich beenden
                 </label>
               </div>
-              <!-- Fertig-Button, unsichtbar aber im Layout -->
+              <!-- Fertig-Button, zunächst unsichtbar -->
               <button
                 type="submit"
                 id="cued-recall-submit"
@@ -101,10 +99,10 @@ var cuedRecall = (function (jspsych) {
         </div>
       `;
 
-      // HTML einsetzen
+      // HTML in das Display-Element einsetzen
       display_element.innerHTML = html;
 
-      // Referenzen
+      // Referenzen zu den Elementen
       const inputElement = display_element.querySelector("#cued-recall-input");
       const wordElement = display_element.querySelector("#current-word");
       const formElement = display_element.querySelector("#cued-recall-form");
@@ -112,20 +110,18 @@ var cuedRecall = (function (jspsych) {
       const confirmationCheckbox = display_element.querySelector("#confirmation-checkbox");
       const submitButton = display_element.querySelector("#cued-recall-submit");
 
-      // Fokus aufs Eingabefeld
+      // Eingabefeld fokussieren
       inputElement.focus();
 
-      // 2-Klick-Mechanismus
+      // 2-Klick-Mechanismus: Zuerst erscheint die Checkbox, anschließend erfolgt der Trialabschluss
       let buttonClickedOnce = false;
 
-      // Keydown-Listener: RT ab dem ersten Tastendruck, Enter zum nächsten Wort
+      // Keydown-Listener: Erfassung der Reaktionszeit ab dem ersten Tastendruck und
+      // bei Enter zum Wechseln zum nächsten Wort
       inputElement.addEventListener("keydown", (e) => {
-        // RT ab erstem Tastendruck
         if (!firstKeypressTime && e.key.length === 1 && !e.altKey && !e.ctrlKey && !e.metaKey) {
           firstKeypressTime = performance.now();
         }
-
-        // Enter -> nächstes Wort (nur, wenn wir nicht beim letzten Wort sind)
         if (e.key === "Enter") {
           e.preventDefault();
           if (currentWordIndex < wordsToDisplay.length - 1) {
@@ -134,7 +130,7 @@ var cuedRecall = (function (jspsych) {
         }
       });
 
-      // Funktion: Wort + RT speichern, Index erhöhen
+      // Funktion: Aktuelles Wort mitsamt RT speichern und zum nächsten Wort wechseln
       function handleWordSubmission() {
         const value = inputElement.value.trim();
         if (!value) return;
@@ -146,7 +142,7 @@ var cuedRecall = (function (jspsych) {
         const currentWord = wordsToDisplay[currentWordIndex];
         responses.push({ antwort: value, rt: rt, wort: currentWord });
 
-        // Nächstes Wort
+        // Zum nächsten Wort wechseln
         currentWordIndex++;
         if (currentWordIndex < wordsToDisplay.length) {
           wordElement.textContent = getFirstTwoLetters(wordsToDisplay[currentWordIndex]);
@@ -156,18 +152,17 @@ var cuedRecall = (function (jspsych) {
           inputElement.focus();
         }
 
-        // Sobald wir JETZT am letzten Wort angekommen sind -> Nur Button sichtbar machen
+        // Erscheinen des "Fertig"-Buttons beim letzten Wort
         if (currentWordIndex === wordsToDisplay.length - 1) {
           makeVisible(submitButton);
-          // NICHT: makeVisible(checkboxContainer); -> die Checkbox bleibt erstmal verborgen
         }
       }
 
-      // Klick auf "Fertig"
+      // Formular-Submit: Beim Klick auf "Fertig"
       formElement.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        // Falls letztes Wort noch nicht abgesendet: jetzt speichern
+        // Beim letzten Wort evtl. noch Eingabe speichern
         if (currentWordIndex === wordsToDisplay.length - 1) {
           const value = inputElement.value.trim();
           if (value) {
@@ -180,18 +175,15 @@ var cuedRecall = (function (jspsych) {
           }
         }
 
-        // 2-Klick-Mechanismus
+        // 2-Klick-Mechanismus: Erst Checkbox anzeigen, dann mit bestätigt beenden
         if (!buttonClickedOnce) {
-          // Erster Klick -> Checkbox sichtbar machen (NICHT vorher)
           makeVisible(checkboxContainer);
           buttonClickedOnce = true;
           return;
         } else {
-          // Zweiter Klick -> Beenden, nur wenn Checkbox angehakt
           if (!confirmationCheckbox.checked) {
             return;
           }
-          // Trial beenden
           const trialdata = {
             responses: responses,
             randomized_order: wordsToDisplay,
@@ -201,7 +193,7 @@ var cuedRecall = (function (jspsych) {
         }
       });
 
-      // Kleine Hilfsfunktion, um 'visibility: hidden' zu entfernen
+      // Hilfsfunktion: Entfernt die Klasse, die das Element unsichtbar macht
       function makeVisible(element) {
         element.classList.remove("invisible-visibility");
       }
@@ -213,97 +205,62 @@ var cuedRecall = (function (jspsych) {
 })(jsPsychModule);
 
 /* -----------------------------------------
-   Inline-CSS für das Plugin (Styling)
-   ----------------------------------------- */
+   PLUGIN-SPEZIFISCHES CSS (inklusive Schriftgröße)
+----------------------------------------- */
 const styleCuedRecall = document.createElement("style");
 styleCuedRecall.innerHTML = `
-  /* Container: Wort + Input in einer Zeile */
-  .jspsych-initial-words-container {
-    display: inline-flex;     
-    align-items: baseline;    
-    justify-content: center;  
-    margin-top: 10px; 
+  /* Unsichtbar, aber belegt Platz */
+  .invisible-visibility {
+    visibility: hidden;
   }
 
-  /* z.B. "13" */
+  /* Container für Wort + Input in einer Zeile */
+  .jspsych-initial-words-container {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  /* Gleiche Font-Einstellungen für vorangestellte Buchstaben und Eingabefeld */
+  .jspsych-initial-words,
+  .cued-recall-line-input {
+    font-size: 24px !important;   /* Wunschgröße – anpassbar */
+    line-height: 1.2 !important;
+    font-family: inherit !important;
+    font-weight: normal !important;
+  }
+
+  /* Darstellung der vorangestellten Buchstaben */
   .jspsych-initial-words {
-    font-size: 20px;
-    margin: 0; 
+    margin: 0;
     padding: 0;
     display: inline-block;
+    vertical-align: baseline;
   }
 
-  /* Eingabefeld nur mit unterer Linie */
+  /* Eingabefeld: Nahtlos, nur untere Linie sichtbar */
   .cued-recall-line-input {
     border: none;
     border-bottom: 2px solid black;
     background: transparent;
     outline: none;
-    font-size: 20px;
-    padding: 2px 0;
-    margin-left: 0;
-    border-radius: 0;
-    box-shadow: none;
-    width: 120px;     
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    width: auto;
+    line-height: 1;
+    box-sizing: content-box;
   }
 
-  /* Container/Panel */
-  .survey-container {
-    background-color: #f1f1f1;
-    padding: 25px 30px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 90%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;  
-  }
-
-  .prompt-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .jspsych-prompt {
-    font-size: 23px; 
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
+  /* Footer-Bereich: Zentriert Checkbox und Button */
   .recall-footer {
     width: 100%;
     display: flex;
-    justify-content: flex-end; 
+    justify-content: center;
     align-items: center;
+    gap: 15px;
     margin-top: 20px;
-  }
-
-  /* Unsichtbar, aber belegt Platz => Kasten springt nicht */
-  .invisible-visibility {
-    visibility: hidden;
-  }
-
-  #confirmation-checkbox-container {
-    margin-right: 15px;
-  }
-
-  .jspsych-btn {
-    padding: 12px 25px;
-    font-size: 16px;
-    background-color: #4caf50; 
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .jspsych-btn:hover {
-    background-color: #45a049;
   }
 `;
 document.head.appendChild(styleCuedRecall);

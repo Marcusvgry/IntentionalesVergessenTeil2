@@ -44,13 +44,14 @@ var freeRecall = (function (jspsych) {
             <p class="jspsych-prompt">${trial.prompt}</p>
           </div>
           <form id="jspsych-free-recall-form" style="width: 100%;">
-            <!-- Eingabefeld ohne size-Attribut -->
+            <!-- Eingabefeld mit angepasster Schriftgröße -->
             <input
               type="text"
               id="free-recall-input"
               name="response"
               class="jspsych-input input-field"
               autofocus
+              style="font-size: 24px;"
             />
             <div class="recall-footer">
               <!-- Checkbox-Container (zunächst unsichtbar) -->
