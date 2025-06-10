@@ -1,52 +1,111 @@
 /* Ensure the html and body elements take up the full height */
-html, body {
-  font-family: Arial, sans-serif;
-  height: 100%;
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  background: #ffffff; /* sanfter Hintergrund */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Container for the survey */
+/* Haupt-Container */
 .survey-container {
-  background-color: #f1f1f1; /* Slightly darker gray tone than the background */
-  padding: 25px 30px; /* Pleasant spacing within the container */
-  border-radius: 12px; /* Slight rounding of the corners */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  max-width: 500px; /* Maximum width of the container */
-  width: 70%;
-  margin: 0 auto; 
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center items horizontally */
+  background-color: #eff2f5;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
 }
 
+/* Überschriften und Prompts */
+.jspsych-prompt,
+.survey-container p {
+  font-size: 1.2rem;
+  color: #333333;
+  margin-bottom: 1rem;
+}
+
+/* Input-Feld (Versuchspersonennummer o.ä.) */
+.input-field {
+  width: 100%;
+  max-width: 260px;
+  margin: 0.5rem auto 1.5rem;
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
 
 .input-field:focus {
-  border-color: #000000; /* Blue highlight on focus */
+  border-color: #4caf50;
   outline: none;
 }
 
-/* Radio buttons */
+/* Bedingungen (Radio Buttons) */
 .condition-radio {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
+  gap: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.condition-radio input[type="radio"] {
+  display: none;
 }
 
 .condition-label {
-  font-size: 1.1em;
-  color: #555555; /* Soft gray color for the labels */
+  position: relative;
+  padding: 8px 14px;
+  font-size: 1rem;
+  color: #555555;
+  border: 2px solid #dddddd;
+  border-radius: 8px;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
 }
 
 .condition-label:hover {
-  color: #000000; /* Blue highlight on hover */
+  background: #f5f5f5;
 }
 
+/* statt #4caf50 (Blau) nimm z.B. #4caf50 (Grün) */
+.condition-radio input[type="radio"]:checked + .condition-label {
+  background: #4caf50;
+  color: #ffffff;
+  border-color: #4caf50;
+}
+
+/* Dropdowns für Reaktivierter Ton */
+.condition-select {
+  width: 100%;
+  max-width: 280px;
+  margin: 0.5rem auto 1.5rem;
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  appearance: none; /* Entfernt native Pfeil-Icon */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%227%22%20viewBox%3D%220%200%2010%207%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M0%200l5%207%205-7z%22%20fill%3D%22%23333%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.condition-select:focus {
+  border-color: #4caf50;
+  outline: none;
+}
 
 .jspsych-prompt {
   font-size: 23px; /* 20% größer als 18px */
@@ -55,82 +114,48 @@ html, body {
   text-align: center;
 }
 
-
-/* CSS-Klasse für größere Schrift */
-.stimulus-large-text {
-  font-size: 32px; /* Schriftgröße auf 32px setzen */
-}
-
-
-  
-/* Haupt-Container */
-.survey-container {
-  /* Beispielwerte - ggf. anpassen */
-  background-color: #f1f1f1;
-  padding: 25px 30px;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  max-width: 400px;   /* Container-Breite */
-  width: 90%;         /* oder 70%, wie du magst */
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;  
-}
-
-/* Eingabefeld mit passender Breite */
-.input-field {
-  width: 80%;         /* 80% der Container-Breite */
-  max-width: 250px;   /* Begrenzte Maximalbreite */
-  margin: 10px auto;  /* zentrieren */
-  display: block;     /* block, damit margin: auto greift */
-  font-size: 1em;
-  border: 2px solid #dddddd;
-  border-radius: 5px;
-  padding: 10px;
-  box-sizing: border-box;  
-  /* etc. */
-}
-
-/* Flex-Container für Button (und Checkbox) */
+/* Footer mit Button (z.B. Weiter) */
 .recall-footer {
   width: 100%;
   display: flex;
-  justify-content: flex-end;   /* Rechtsbündig */
+  justify-content: flex-end;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 
-/* Checkbox styling */
-#confirmation-checkbox-container {
-  margin-right: 15px; /* etwas Platz zwischen Checkbox und Button */
-}
-
-/* Button */
 .jspsych-btn {
-  padding: 12px 25px;
-  font-size: 16px;
-  background-color: #4caf50; /* Grün */
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s;
 }
 
 .jspsych-btn:hover {
-  background-color: #45a049;
+  background-color: #43a047;
 }
 
-#cued-recall-input {
-  border: none;                    /* Keine sichtbaren Ränder */
-  border-bottom: 2px solid black;  /* Nur ein unterer schwarzer Strich */
-  background: transparent;         /* Durchsichtiger Hintergrund */
-  outline: none;                   /* Entfernt Fokus-Rand */
-  font-size: 20px;
-  padding: 2px 0;                  /* Leichtes Padding nach oben/unten */
-  margin-left: 0px;                /* Kein extra Zwischenraum (nahtlos) */
-  border-radius: 0;                /* Keine abgerundeten Ecken */
-  box-shadow: none;                /* Entfernt eventuelle Schatten */
-  width: 130px;                    /* Feste Breite (ggf. anpassen) */
+.instructions {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.instructions ul {
+  margin-left: 2em;
+  padding-left: 1em;
+  list-style-type: disc;
+}
+
+.instructions p {
+  margin-bottom: 1em;
+}
+
+.stimulus-large-text {
+  font-size: 32px; /* Schriftgröße auf 32px setzen */
 }

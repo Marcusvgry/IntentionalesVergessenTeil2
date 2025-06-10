@@ -69,7 +69,9 @@ var cuedRecall = (function (jspsych) {
           <div class="prompt-container">
             <p class="jspsych-prompt">${trial.prompt}</p>
             <div class="jspsych-initial-words-container">
-              <p class="jspsych-initial-words" id="current-word">${getFirstTwoLetters(wordsToDisplay[currentWordIndex])}</p><input
+              <p class="jspsych-initial-words" id="current-word">${getFirstTwoLetters(
+                wordsToDisplay[currentWordIndex]
+              )}</p><input
                 type="text"
                 id="cued-recall-input"
                 name="response"
@@ -83,7 +85,7 @@ var cuedRecall = (function (jspsych) {
               <div id="confirmation-checkbox-container" class="invisible-visibility">
                 <input type="checkbox" id="confirmation-checkbox" />
                 <label for="confirmation-checkbox" style="margin-left: 5px;">
-                  Recall wirklich beenden
+                  Beenden bestätigen
                 </label>
               </div>
               <!-- Fertig-Button, zunächst unsichtbar -->
@@ -106,8 +108,12 @@ var cuedRecall = (function (jspsych) {
       const inputElement = display_element.querySelector("#cued-recall-input");
       const wordElement = display_element.querySelector("#current-word");
       const formElement = display_element.querySelector("#cued-recall-form");
-      const checkboxContainer = display_element.querySelector("#confirmation-checkbox-container");
-      const confirmationCheckbox = display_element.querySelector("#confirmation-checkbox");
+      const checkboxContainer = display_element.querySelector(
+        "#confirmation-checkbox-container"
+      );
+      const confirmationCheckbox = display_element.querySelector(
+        "#confirmation-checkbox"
+      );
       const submitButton = display_element.querySelector("#cued-recall-submit");
 
       // Eingabefeld fokussieren
@@ -119,7 +125,13 @@ var cuedRecall = (function (jspsych) {
       // Keydown-Listener: Erfassung der Reaktionszeit ab dem ersten Tastendruck und
       // bei Enter zum Wechseln zum nächsten Wort
       inputElement.addEventListener("keydown", (e) => {
-        if (!firstKeypressTime && e.key.length === 1 && !e.altKey && !e.ctrlKey && !e.metaKey) {
+        if (
+          !firstKeypressTime &&
+          e.key.length === 1 &&
+          !e.altKey &&
+          !e.ctrlKey &&
+          !e.metaKey
+        ) {
           firstKeypressTime = performance.now();
         }
         if (e.key === "Enter") {
@@ -145,7 +157,9 @@ var cuedRecall = (function (jspsych) {
         // Zum nächsten Wort wechseln
         currentWordIndex++;
         if (currentWordIndex < wordsToDisplay.length) {
-          wordElement.textContent = getFirstTwoLetters(wordsToDisplay[currentWordIndex]);
+          wordElement.textContent = getFirstTwoLetters(
+            wordsToDisplay[currentWordIndex]
+          );
           lastWordEndTime = performance.now();
           firstKeypressTime = null;
           inputElement.value = "";
