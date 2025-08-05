@@ -124,8 +124,7 @@ const instructions = {
   type: jsPsychInstructions,
   pages: [
     `<div class="instructions">
-        Noch Ändern:
-        Vielen Dank, dass Sie zum zweiten Termin dieser Studie erschienen sind. <br> Wir werden Sie nun bitten, sich an die Wörter zu erinnern, die Sie beim ersten Termin gelernt haben</div>`,
+        Guten Morgen! Wir hoffen, Sie haben gut geschlafen. <br> Wir werden Sie nun bitten, sich an die Wörter zu erinnern, die Sie beim ersten Termin gelernt haben</div>`,
   ],
   show_clickable_nav: true,
   button_label_next: "Weiter",
