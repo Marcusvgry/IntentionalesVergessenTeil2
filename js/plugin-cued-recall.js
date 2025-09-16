@@ -33,7 +33,6 @@ var cuedRecall = (function (jspsych) {
       this.jsPsych = jsPsych;
     }
 
-    // Hilfsfunktion zum Durchmischen eines Arrays
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -43,27 +42,20 @@ var cuedRecall = (function (jspsych) {
     }
 
     trial(display_element, trial) {
-      // Variablen für die Eingaben
-      let responses = []; // Liste mit { antwort, rt, wort }
+      let responses = [];
       let lastWordEndTime = performance.now();
       let firstKeypressTime = null;
       let currentWordIndex = 0;
 
-      // Kopie der Wörter (optional randomisiert)
       let wordsToDisplay = trial.string_to_display.slice();
       if (trial.randomized) {
         wordsToDisplay = this.shuffleArray(wordsToDisplay);
       }
 
-      // Funktion: Zeigt nur die ersten 2 Buchstaben eines Wortes
       function getFirstTwoLetters(word) {
         return word.slice(0, 2);
       }
 
-      // HTML-Layout:
-      // - Verwendung der globalen Klasse "survey-container" (für den grauen Kasten)
-      // - Aneinanderreihung von <p> (Initial-Buchstaben) und <input> ohne Leerzeichen/Zeilenumbrüche,
-      //   damit der getippte Text nahtlos an die vorangestellten Buchstaben anschließt.
       let html = `
         <div id="jspsych-cued-recall" class="survey-container">
           <div class="prompt-container">
@@ -81,14 +73,14 @@ var cuedRecall = (function (jspsych) {
           </div>
           <form id="cued-recall-form" style="width: 100%;">
             <div class="recall-footer">
-              <!-- Checkbox-Container, zunächst unsichtbar -->
+              <!-- Checkbox-Container -->
               <div id="confirmation-checkbox-container" class="invisible-visibility">
                 <input type="checkbox" id="confirmation-checkbox" />
                 <label for="confirmation-checkbox" style="margin-left: 5px;">
                   Beenden bestätigen
                 </label>
               </div>
-              <!-- Fertig-Button, zunächst unsichtbar -->
+              <!-- Fertig-Button -->
               <button
                 type="submit"
                 id="cued-recall-submit"
@@ -101,10 +93,8 @@ var cuedRecall = (function (jspsych) {
         </div>
       `;
 
-      // HTML in das Display-Element einsetzen
       display_element.innerHTML = html;
 
-      // Referenzen zu den Elementen
       const inputElement = display_element.querySelector("#cued-recall-input");
       const wordElement = display_element.querySelector("#current-word");
       const formElement = display_element.querySelector("#cued-recall-form");
@@ -116,14 +106,10 @@ var cuedRecall = (function (jspsych) {
       );
       const submitButton = display_element.querySelector("#cued-recall-submit");
 
-      // Eingabefeld fokussieren
       inputElement.focus();
 
-      // 2-Klick-Mechanismus: Zuerst erscheint die Checkbox, anschließend erfolgt der Trialabschluss
       let buttonClickedOnce = false;
 
-      // Keydown-Listener: Erfassung der Reaktionszeit ab dem ersten Tastendruck und
-      // bei Enter zum Wechseln zum nächsten Wort
       inputElement.addEventListener("keydown", (e) => {
         if (
           !firstKeypressTime &&
@@ -142,7 +128,6 @@ var cuedRecall = (function (jspsych) {
         }
       });
 
-      // Funktion: Aktuelles Wort mitsamt RT speichern und zum nächsten Wort wechseln
       function handleWordSubmission() {
         const value = inputElement.value.trim();
         if (!value) return;
@@ -154,7 +139,6 @@ var cuedRecall = (function (jspsych) {
         const currentWord = wordsToDisplay[currentWordIndex];
         responses.push({ antwort: value, rt: rt, wort: currentWord });
 
-        // Zum nächsten Wort wechseln
         currentWordIndex++;
         if (currentWordIndex < wordsToDisplay.length) {
           wordElement.textContent = getFirstTwoLetters(
@@ -166,17 +150,13 @@ var cuedRecall = (function (jspsych) {
           inputElement.focus();
         }
 
-        // Erscheinen des "Fertig"-Buttons beim letzten Wort
         if (currentWordIndex === wordsToDisplay.length - 1) {
           makeVisible(submitButton);
         }
       }
-
-      // Formular-Submit: Beim Klick auf "Fertig"
       formElement.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        // Beim letzten Wort evtl. noch Eingabe speichern
         if (currentWordIndex === wordsToDisplay.length - 1) {
           const value = inputElement.value.trim();
           if (value) {
@@ -189,7 +169,6 @@ var cuedRecall = (function (jspsych) {
           }
         }
 
-        // 2-Klick-Mechanismus: Erst Checkbox anzeigen, dann mit bestätigt beenden
         if (!buttonClickedOnce) {
           makeVisible(checkboxContainer);
           buttonClickedOnce = true;
@@ -207,7 +186,6 @@ var cuedRecall = (function (jspsych) {
         }
       });
 
-      // Hilfsfunktion: Entfernt die Klasse, die das Element unsichtbar macht
       function makeVisible(element) {
         element.classList.remove("invisible-visibility");
       }
@@ -219,55 +197,46 @@ var cuedRecall = (function (jspsych) {
 })(jsPsychModule);
 
 /* -----------------------------------------
-   PLUGIN-SPEZIFISCHES CSS (inklusive Schriftgröße)
+   PLUGIN-SPEZIFISCHES CSS 
 ----------------------------------------- */
 const styleCuedRecall = document.createElement("style");
 styleCuedRecall.innerHTML = `
-  /* Unsichtbar, aber belegt Platz */
   .invisible-visibility {
     visibility: hidden;
   }
 
-  /* Container für Wort + Input in einer Zeile */
-  .jspsych-initial-words-container {
-    display: inline-flex;
-    align-items: baseline;
-    justify-content: center;
-    margin-top: 10px;
-  }
+.jspsych-initial-words-container {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;  /* Wort = auto, Input = Rest */
+  align-items: baseline !important;
+  margin: 10px auto 0 !important;               /* zentriert + oben 10px */
+  width: 300px !important;                       /* feste Gesamtbreite */
+  max-width: 300px !important;
+}
 
-  /* Gleiche Font-Einstellungen für vorangestellte Buchstaben und Eingabefeld */
-  .jspsych-initial-words,
-  .cued-recall-line-input {
-    font-size: 24px !important;   /* Wunschgröße – anpassbar */
-    line-height: 1.2 !important;
-    font-family: inherit !important;
-    font-weight: normal !important;
-  }
+.jspsych-initial-words,
+.cued-recall-line-input {
+  font-size: 24px !important;
+  line-height: 1.2 !important;
+  font-family: inherit !important;
+  font-weight: normal !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
-  /* Darstellung der vorangestellten Buchstaben */
-  .jspsych-initial-words {
-    margin: 0;
-    padding: 0;
-    display: inline-block;
-    vertical-align: baseline;
-  }
+.cued-recall-line-input {
+  grid-column: 2 !important;    /* in die 2. Spalte */
+  width: 100% !important;       /* füllt exakt Rest bis 300px */
+  border: none !important;
+  border-bottom: 2px solid black !important;
+  background: transparent !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+}
 
-  /* Eingabefeld: Nahtlos, nur untere Linie sichtbar */
-  .cued-recall-line-input {
-    border: none;
-    border-bottom: 2px solid black;
-    background: transparent;
-    outline: none;
-    margin: 0;
-    padding: 0;
-    vertical-align: baseline;
-    width: auto;
-    line-height: 1;
-    box-sizing: content-box;
-  }
 
-  /* Footer-Bereich: Zentriert Checkbox und Button */
+
+
   .recall-footer {
     width: 100%;
     display: flex;
