@@ -308,6 +308,19 @@ const stMarys = {
   },
 };
 
+// Hilfsfunktion: mm:ss formatieren
+function formatMMSS(ms) {
+  ms = Math.max(0, ms);
+  const totalSec = Math.ceil(ms / 1000);
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+// Globale Referenz für das Interval, damit wir es aufräumen können
+let vfTimerHandle = null;
+
+
 var rwt_instructions = {
   type: jsPsychHtmlButtonResponse,
   stimulus: () => rwt_instructions_text(verbal_fluency_cue),
@@ -320,20 +333,36 @@ var verbal_fluency = {
   on_load: () => {
     // Auto focus input field
     let inputField = document.getElementById("verbal-fluency");
-    inputField.focus();
+    if (inputField) inputField.focus();
+
+    // Countdown oben rechts initialisieren/anzeigen
+    updateVFTimer();
+    // Alle 200ms aktualisieren (flüssig, aber nicht zu häufig)
+    if (vfTimerHandle) jsPsych.pluginAPI.clearInterval(vfTimerHandle);
+    vfTimerHandle = jsPsych.pluginAPI.setInterval(updateVFTimer, 200);
   },
   type: jsPsychSurveyHtmlForm,
-  /* Dynamically adjust trial duration to remaining time; ensures the trial will end in time even 
-  when no response is made. */
+
+  // Sorgt dafür, dass der Trial rechtzeitig endet
   trial_duration: () =>
-    verbal_fluency_duration - (+new Date() - verbal_fluency_start),
+    verbal_fluency_duration - (Date.now() - verbal_fluency_start),
+
   html: () => rwt_trial_text(verbal_fluency_cue),
   button_label: "ok",
   data: { trial: "verbal_fluency" },
+
   on_finish: function (data) {
     // Clean response
     data.response = data.response["verbal-fluency"];
     data.verbal_fluency_cue = verbal_fluency_cue;
+
+    // Timer-Interval bereinigen (Element darf bleiben, damit es im nächsten Trial weiter genutzt wird)
+    if (vfTimerHandle) {
+      jsPsych.pluginAPI.clearInterval(vfTimerHandle);
+      vfTimerHandle = null;
+    }
+    // Letztes Update, falls knapp beendet wurde
+    updateVFTimer();
   },
 };
 
@@ -341,5 +370,16 @@ var verbal_fluency = {
 var verbal_fluency_loop = {
   timeline: [verbal_fluency],
   loop_function: () =>
-    +new Date() - verbal_fluency_start < verbal_fluency_duration,
+    Date.now() - verbal_fluency_start < verbal_fluency_duration,
 };
+
+// Optional: Timer am Ende des gesamten Loops entfernen
+const removeTimer = {
+  type: jsPsychCallFunction,
+  func: () => {
+    const el = document.getElementById("vf-timer");
+    if (el) el.remove();
+  },
+};
+// Beispiel: erst dein Loop, dann das Entfernen
+// timeline: [verbal_fluency_loop, removeTimer]

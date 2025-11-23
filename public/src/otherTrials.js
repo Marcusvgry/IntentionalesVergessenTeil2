@@ -25,9 +25,10 @@ const cuedRecallTrial = {
 const Debriefing = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `<div class="instructions">
-    Sie sind am Ende der Studie angelangt. <br>
+    <p> Sie sind am Ende der Studie angelangt. <br>
 Vielen Dank für Ihre Teilnahme, Sie unterstützen damit unsere Forschung
-!
+! </p>
+<p> Wenden Sie sich nun bitte an die Versuchsleitung </p>
     </div>`,
   choices: ["ArrowDown"],
 };

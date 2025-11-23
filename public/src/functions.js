@@ -110,3 +110,32 @@ function createCuedRecallTrial() {
     string_to_display: allWords,
   };
 }
+
+function ensureTimerEl() {
+  let el = document.getElementById("vf-timer");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "vf-timer";
+    el.setAttribute("aria-live", "polite");
+    // schlichtes Styling oben rechts
+    el.style.position = "fixed";
+    el.style.top = "12px";
+    el.style.right = "12px";
+    el.style.padding = "6px 10px";
+    el.style.borderRadius = "9999px";
+    el.style.background = "rgba(0,0,0,0.75)";
+    el.style.color = "#fff";
+    el.style.fontFamily = "system-ui, sans-serif";
+    el.style.fontWeight = "600";
+    el.style.zIndex = "9999";
+    document.body.appendChild(el);
+  }
+  return el;
+}
+
+function updateVFTimer() {
+  const remaining =
+    verbal_fluency_duration - (Date.now() - verbal_fluency_start);
+  const el = ensureTimerEl();
+  el.textContent = formatMMSS(remaining);
+}
