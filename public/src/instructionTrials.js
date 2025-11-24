@@ -114,6 +114,18 @@ const instructions2 = {
   allow_backward: false,
 };
 
+const breakInstructions = {
+  type: jsPsychInstructions,
+  pages: [
+    `<div class="instructions">
+          Bitte wenden Sie sich an die Versuchsleitung
+      </div>`,
+  ],
+  show_clickable_nav: true,
+  button_label_next: "Weiter",
+  allow_backward: false,
+};
+
 const Instructions_Teil3 = {
   type: jsPsychInstructions,
   pages: [
