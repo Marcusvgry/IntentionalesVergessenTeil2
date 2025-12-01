@@ -29,6 +29,7 @@ const Debriefing = {
 Vielen Dank für Ihre Teilnahme, Sie unterstützen damit unsere Forschung
 ! </p>
 <p> Wenden Sie sich nun bitte an die Versuchsleitung </p>
+<p> Information an die Versuchsleitung: Daten speichern mit Pfeil-nach-unten Taste</p>
     </div>`,
   choices: ["ArrowDown"],
 };

@@ -88,7 +88,7 @@ var pvt_start_screen = {
   pages: [pvt_start_p1, pvt_start_p2],
   show_clickable_nav: true,
   button_label_next: () => cont_text,
-  button_label_previous: () => prev_text,
+  allow_backward: false,
 
   data: { trial: "pvt_start_screen" },
 
@@ -319,7 +319,6 @@ function formatMMSS(ms) {
 
 // Globale Referenz für das Interval, damit wir es aufräumen können
 let vfTimerHandle = null;
-
 
 var rwt_instructions = {
   type: jsPsychHtmlButtonResponse,
