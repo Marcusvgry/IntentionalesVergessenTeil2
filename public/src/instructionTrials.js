@@ -41,6 +41,7 @@ const instructions2 = {
         <p>Im Folgenden werden Ihnen wieder eine Reihe von Wörtern präsentiert. Zunächst einmal bitten wir Sie, so viele der gelernten Wörter wie möglich, frei aus dem Gedächtnis abzurufen. </p>
         <p>WICHTIG: Anders als in den Übungsdurchgängen möchten wir Sie diesmal bitten ALLE Wörter einzugeben, an die Sie sich noch erinnern. Dieser Test ist also unabhängig davon, ob dem Wort in der Lernphase ein EEE oder ein VVV gefolgt war</p>
         <p> Bitte schreiben Sie also auch die Wörter auf, die Sie vergessen sollten. </p>
+         <p> Sobald Sie ein Wort eingegeben haben, können Sie Ihre Eingabe mit der Enter-Taste bestätigen. Sobald Ihnen keine Wörter mehr einfallen, können Sie mit dem Fertig-Button fortfahren. Sie müssen dann noch bestätigen, dass Sie wirklich fortfahren wollen sowie ein weiteres Mal auf den Fertig-Button klicken.</p>
         </div>`,
   ],
   show_clickable_nav: true,
@@ -68,7 +69,8 @@ const Instructions_Teil3 = {
         Wir zeigen Ihnen von diesen Wörtern jetzt jeweils die ersten beiden Buchstaben und möchten Sie bitten, 
         das Wort dann entsprechend zu vervollständigen. <br> Auch hier ist es nicht relevant, ob das Wort erinnert
          oder vergessen werden sollte. <br> Es gilt außerdem wieder, auch wenn sie das Wort eben schon korrekt erinnert haben, soll
-         Sie es trotzdem noch einmal in diesem Test vervollständigen</div>`,
+         Sie es trotzdem noch einmal in diesem Test vervollständigen <br>
+          <p> Ihre Eingabe bestätigen Sie bitte wieder mit der Enter-Taste. Beim letzten Word erscheint der Fertig-Button, mit dem Sie Fortfahren können. Das Bestätigen mit der Enter Taste funktioniert beim letzten Wort nicht mehr. Tippen Sie das Wort ein und klicken Sie dann auf den Fertig-Button, Ihre Eingabe wird gespeichert.</p></div>`,
   ],
   show_clickable_nav: true,
   button_label_next: "Vervollständigungsaufgabe beginnen",
