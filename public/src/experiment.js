@@ -20,7 +20,7 @@ var freeRecallList = [];
 
 function createTimeline() {
   timeline.push(preload);
-  /*timeline.push(CBC_VPNNummer);
+  timeline.push(CBC_VPNNummer);
   timeline.push(stMarys);
   timeline.push(breakInstructions);
   timeline.push(instructions);
@@ -29,7 +29,6 @@ function createTimeline() {
   timeline.push(Instructions_Teil3);
   timeline.push(cuedRecallTrial);
   timeline.push(stanfordSleepiness);
-  */
   timeline.push(
     pvt_start_screen,
     pvt_practice_outer,
