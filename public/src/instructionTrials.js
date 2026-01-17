@@ -1,4 +1,3 @@
-// Erste Instruktionen
 const CBC_VPNNummer = {
   type: jsPsychSurveyHtmlForm,
   preamble: ``,
@@ -39,8 +38,8 @@ const instructions2 = {
     `<div class="instructions">
         <p> Der Gedächtnistest wird so ähnlich ablaufen wie der Gedächtnistest, den Sie bereits im Übungsdurchgang gestern Abend absolviert haben. </p>
         <p>Im Folgenden werden Ihnen wieder eine Reihe von Wörtern präsentiert. Zunächst einmal bitten wir Sie, so viele der gelernten Wörter wie möglich, frei aus dem Gedächtnis abzurufen. </p>
-        <p>WICHTIG: Anders als in den Übungsdurchgängen möchten wir Sie diesmal bitten ALLE Wörter einzugeben, an die Sie sich noch erinnern. Dieser Test ist also unabhängig davon, ob dem Wort in der Lernphase ein EEE oder ein VVV gefolgt war</p>
-        <p> Bitte schreiben Sie also auch die Wörter auf, die Sie vergessen sollten. </p>
+        <p>WICHTIG: Anders als in den Übungsdurchgängen möchten wir Sie diesmal bitten <strong> ALLE </strong> Wörter einzugeben, an die Sie sich noch erinnern. Dieser Test ist also unabhängig davon, ob dem Wort in der Lernphase ein EEE oder ein VVV gefolgt war</p>
+        <p> <strong> Bitte schreiben Sie also auch die Wörter auf, die Sie vergessen sollten. </strong></p>
          <p> Sobald Sie ein Wort eingegeben haben, können Sie Ihre Eingabe mit der Enter-Taste bestätigen. Sobald Ihnen keine Wörter mehr einfallen, können Sie mit dem Fertig-Button fortfahren. Sie müssen dann noch bestätigen, dass Sie wirklich fortfahren wollen sowie ein weiteres Mal auf den Fertig-Button klicken.</p>
         </div>`,
   ],

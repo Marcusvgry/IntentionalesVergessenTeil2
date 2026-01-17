@@ -210,8 +210,8 @@ var rwtInstructions = {
 
 var getReady = {
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: `<span style='font-size:60px'>GET READY</span><br>
-  <span style='font-size:30px'>Please answer as fast and as accurately as possible.</span>`,
+  stimulus: `<span style='font-size:60px'>Machen Sie sich bereit</span><br>
+  <span style='font-size:30px'>Bitte antworten sie so schnell und so genau wie möglich.</span>`,
   data: { trial: `get_ready` },
   choices: "NO_KEYS",
   trial_duration: 2000,
@@ -240,6 +240,33 @@ var rwtPorM = {
     var wordsArray = JSON.parse(data.typed_words);
   },
 };
+
+var rwtInstructions2 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+     <div id="parchment">
+  <div style="max-width:${instructionsWidth}px; align-items:center;">
+      <div class="instructions" style="padding-left: 40px;">
+    <p> Nun folgt der zweite Teil dieses Experiments. </p>
+    <p> Auch in diesem Abschnitt sollen Sie innerhalb eines Zeitfensters von zwei Minuten so viele passende Wörter wie möglich eingeben.</p>
+
+    <p><strong>Dabei gelten folgende Regeln:</strong></p>
+    <ul>
+    <li>Die Wörter sollen in der deutschen Sprache gebräuchlich sein.</li>
+    <li>Die Wörter müssen zur vorgegebenen Kategorie passen.</li>
+    <li>Jedes Wort darf nur einmal eingegeben werden.</li>
+    <li>Verwenden Sie bitte keine Eigennamen.</li>
+    <li>Die Wörter sollten nur Nomen sein.</li>
+    </ul>
+    <br>
+    <p>Bitte geben Sie die Wörter einzeln ein und drücken Sie nach jedem Wort die Eingabetaste.</p>
+
+    <p>Die genaue Aufgabenstellung wird Ihnen im nächsten Schritt angezeigt.</p>
+    </div><br>`,
+  choices: ["weiter"],
+  data: { trial: "rwtinstructions" },
+};
+
 var rwtProfessionsorHobbies = {
   on_load: function () {
     var display = document.querySelector("#matrix-time");

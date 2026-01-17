@@ -10,7 +10,6 @@ const freeRecallWoerter = {
   button_label: "Fertig",
 };
 
-// Cued recall trial - use timeline_variables for dynamic randomization
 const cuedRecallTrial = {
   type: cuedRecall,
   prompt:
@@ -21,7 +20,6 @@ const cuedRecallTrial = {
   },
 };
 
-// Debriefing
 const Debriefing = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: `<div class="instructions">

@@ -1,4 +1,3 @@
-/* Ensure the html and body elements take up the full height */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -14,7 +13,6 @@ body {
   padding: 0;
 }
 
-/* Haupt-Container */
 .survey-container {
   background-color: #eff2f5;
   padding: 30px 40px;
@@ -25,7 +23,6 @@ body {
   text-align: center;
 }
 
-/* Überschriften und Prompts */
 .jspsych-prompt,
 .survey-container p {
   font-size: 1.2rem;
@@ -33,7 +30,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Input-Feld (Versuchspersonennummer o.ä.) */
 .input-field {
   width: 100%;
   max-width: 260px;
@@ -50,7 +46,6 @@ body {
   outline: none;
 }
 
-/* Bedingungen (Radio Buttons) */
 .condition-radio {
   display: flex;
   justify-content: center;
@@ -78,14 +73,12 @@ body {
   background: #f5f5f5;
 }
 
-/* statt #4caf50 (Blau) nimm z.B. #4caf50 (Grün) */
 .condition-radio input[type="radio"]:checked + .condition-label {
   background: #4caf50;
   color: #ffffff;
   border-color: #4caf50;
 }
 
-/* Dropdowns für Reaktivierter Ton */
 .condition-select {
   width: 100%;
   max-width: 280px;
@@ -107,13 +100,12 @@ body {
 }
 
 .jspsych-prompt {
-  font-size: 23px; /* 20% größer als 18px */
+  font-size: 23px;
   color: #333;
-  margin-bottom: 24px; /* 20% größer als 20px */
+  margin-bottom: 24px;
   text-align: center;
 }
 
-/* Footer mit Button (z.B. Weiter) */
 .recall-footer {
   width: 100%;
   display: flex;
@@ -156,16 +148,9 @@ body {
 }
 
 .stimulus-large-text {
-  font-size: 32px; /* Schriftgröße auf 32px setzen */
+  font-size: 32px;
 }
 
-/*
- * CSS for jsPsych experiments.
- *
- * This stylesheet provides minimal styling to make jsPsych
- * experiments look polished without any additional styles.
- */
-/* Container holding jsPsych content */
 .jspsych-display-element {
   display: flex;
   flex-direction: column;
@@ -188,7 +173,7 @@ body {
 
 .jspsych-content {
   text-align: center;
-  margin: 0 auto; /* this is for overflowing content */
+  margin: 0 auto;
 }
 
 .jspsych-top {
@@ -199,20 +184,17 @@ body {
   align-items: center;
 }
 
-/* fonts and type */
 .jspsych-display-element {
   font-family: "Open Sans", "Arial", sans-serif;
   font-size: 18px;
   line-height: 1.6em;
 }
 
-/* Form elements like input fields and buttons */
 .jspsych-display-element input[type="text"] {
   font-family: "Open Sans", "Arial", sans-serif;
   font-size: 14px;
 }
 
-/* Buttons and Button Groups */
 .jspsych-btn-group-flex {
   display: flex;
   justify-content: center;
@@ -246,7 +228,6 @@ body {
   border-color: #ccc;
 }
 
-/* only apply the hover style on devices with a mouse/pointer that can hover - issue #977 */
 @media (hover: hover) {
   .jspsych-btn:hover {
     background-color: #ddd;
@@ -265,7 +246,6 @@ body {
   cursor: not-allowed;
 }
 
-/* custom style for input[type="range] (slider) to improve alignment between positions and labels */
 .jspsych-slider {
   appearance: none;
   -webkit-appearance: none;
@@ -375,12 +355,10 @@ body {
   height: 100%;
 }
 
-/* Appearance of jsPsych.data.displayData() */
 #jspsych-data-display {
   text-align: left;
 }
 
-/* CUSTOM ADDITIONS TO THE JSPSYCH STANDARD TEMPLATE */
 .questions {
   text-align: justify;
   margin-top: 30px;
@@ -433,8 +411,6 @@ body {
   height: 3em;
 }
 
-/* Custom (larger) radio buttons */
-
 input[type="radio"]:checked {
   border-color: #006a60;
   background: #006a60;
@@ -466,7 +442,6 @@ input[type="radio"]:checked::after {
   background: white;
 }
 
-/* Further adjustments for survey likert radio buttons */
 .jspsych-survey-likert-opts li {
   display: inline-block;
   text-align: center;
@@ -483,9 +458,6 @@ input[type="radio"]:checked::after {
   text-align: center;
 }
 
-/* PVT */
-
-/* stopwatch */
 .time {
   font-size: 120px;
 }
@@ -500,8 +472,6 @@ input[type="radio"]:checked::after {
   color: rgb(241, 26, 26);
 }
 
-/* Style active (_a) and passive  (_p) stop watch, i.e. numbers that are currently counting up
-vs. not (yet) counting up */
 .stopwatch_a {
   font-size: 120px;
   color: rgb(241, 26, 26);
